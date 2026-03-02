@@ -32,7 +32,7 @@
             min-height: 100vh;
             overflow-x: hidden;
             transition: background 0.5s ease;
-            -webkit-tap-highlight-color: transparent; /* Remove tap highlight on mobile */
+            -webkit-tap-highlight-color: transparent;
         }
 
         body.loader-active {
@@ -63,7 +63,7 @@
             flex-direction: column;
             align-items: center;
             justify-content: center;
-            padding: 1rem; /* Reduced padding for mobile */
+            padding: 1rem;
         }
 
         /* --- Input Section --- */
@@ -74,7 +74,7 @@
         }
 
         .title {
-            font-size: clamp(2.5rem, 12vw, 6rem); /* Fluid typography */
+            font-size: clamp(2.5rem, 12vw, 6rem);
             background: linear-gradient(45deg, var(--holi-pink), var(--holi-yellow), var(--holi-green), var(--holi-orange), var(--holi-purple), var(--holi-blue));
             background-size: 300% 300%;
             -webkit-background-clip: text;
@@ -110,7 +110,7 @@
             text-align: center;
             outline: none;
             width: 100%;
-            max-width: 400px; /* Limit width on desktop */
+            max-width: 400px;
             transition: transform 0.3s, box-shadow 0.3s;
         }
 
@@ -126,7 +126,7 @@
             transition: all 0.3s ease;
             position: relative;
             overflow: hidden;
-            width: 90%; /* Wider on mobile */
+            width: 90%;
             max-width: 300px;
         }
 
@@ -169,7 +169,7 @@
             display: flex;
             align-items: center;
             justify-content: center;
-            transform: scale(0.7); /* Scale down by default for better mobile fit */
+            transform: scale(0.7);
         }
 
         .pichkari-3d {
@@ -227,20 +227,60 @@
             animation: pumpMove 0.8s infinite ease-in-out;
         }
 
-        /* Splash System */
+        /* --- REALISTIC SPLASH SYSTEM --- */
         .spray-container {
-            position: absolute; left: 290px; top: 45px; width: 20px; height: 20px; z-index: 3;
+            position: absolute; 
+            left: 310px; /* Aligned exactly with nozzle tip */
+            top: 45px; 
+            width: 20px; 
+            height: 20px; 
+            z-index: 3;
+            transform: rotateX(20deg); /* Match gun angle */
+        }
+
+        /* Main Water Jet */
+        .water-jet {
+            position: absolute;
+            top: 5px;
+            left: 0;
+            width: 0px;
+            height: 6px;
+            background: linear-gradient(to right, rgba(255, 255, 255, 0.9), rgba(0, 191, 255, 0.6));
+            border-radius: 0 50% 50% 0;
+            filter: blur(1px);
+            animation: jetStream 0.4s infinite alternate;
+            transform-origin: left center;
+            box-shadow: 0 0 5px var(--holi-blue);
         }
 
         .color-drop {
-            position: absolute; width: 8px; height: 8px; border-radius: 50%; opacity: 0;
-            animation: splashForward 0.4s infinite linear;
+            position: absolute; 
+            width: 6px; 
+            height: 6px; 
+            border-radius: 50%; 
+            opacity: 0;
+            filter: blur(0.5px);
+            animation: splashRealistic 0.6s infinite linear;
         }
 
-        /* Default splash distance (Desktop) */
-        @keyframes splashForward {
-            0% { transform: translate(0, 0) scale(1); opacity: 1; }
-            100% { transform: translate(200px, calc(var(--ty) * 1px)) scale(0); opacity: 0; }
+        /* Jet Pulsing Animation */
+        @keyframes jetStream {
+            0% { width: 80px; opacity: 0.3; transform: scaleY(0.8); }
+            50% { width: 150px; opacity: 0.8; transform: scaleY(1.2); }
+            100% { width: 120px; opacity: 0.6; transform: scaleY(1); }
+        }
+
+        /* Gravity Arc Animation for Drops */
+        @keyframes splashRealistic {
+            0% { 
+                transform: translate(0, 0) scale(1); 
+                opacity: 1; 
+            }
+            100% { 
+                /* X moves forward, Y moves down (gravity) */
+                transform: translate(200px, calc(var(--ty) * 1.5px)) scale(0.2); 
+                opacity: 0; 
+            }
         }
 
         .loader-text {
@@ -290,7 +330,7 @@
             margin: 0.5rem 0;
             position: relative;
             display: inline-block;
-            word-break: break-word; /* Handle long names on mobile */
+            word-break: break-word;
         }
 
         .person-name span {
@@ -340,39 +380,30 @@
         /* --- MOBILE RESPONSIVE STYLES --- */
         @media (max-width: 768px) {
             .pichkari-scene {
-                /* Scale down significantly on mobile */
                 transform: scale(0.55);
-                margin-top: -20px; /* Adjust vertical alignment */
+                margin-top: -20px;
             }
 
-            /* Reduce splash distance for mobile screens */
-            @keyframes splashForward {
+            /* Adjust splash for smaller screens */
+            @keyframes jetStream {
+                0% { width: 40px; opacity: 0.3; }
+                50% { width: 80px; opacity: 0.8; }
+                100% { width: 60px; opacity: 0.6; }
+            }
+            
+            @keyframes splashRealistic {
                 0% { transform: translate(0, 0) scale(1); opacity: 1; }
-                100% { transform: translate(100px, calc(var(--ty) * 0.5px)) scale(0); opacity: 0; }
+                100% { transform: translate(80px, calc(var(--ty) * 0.8px)) scale(0.2); opacity: 0; }
             }
 
-            .loader-text {
-                font-size: 1.2rem;
-                margin-top: 20px;
-            }
-
-            .deco-powder {
-                width: 150px; /* Smaller background blurs */
-                height: 150px;
-                filter: blur(60px);
-            }
+            .loader-text { font-size: 1.2rem; margin-top: 20px; }
+            .deco-powder { width: 150px; height: 150px; filter: blur(60px); }
         }
 
         @media (max-width: 480px) {
-            .pichkari-scene {
-                transform: scale(0.45);
-            }
-            .loader-text {
-                font-size: 1rem;
-            }
-            .celebrate-btn {
-                width: 100%;
-            }
+            .pichkari-scene { transform: scale(0.45); }
+            .loader-text { font-size: 1rem; }
+            .celebrate-btn { width: 100%; }
         }
 
         @media (prefers-reduced-motion: reduce) {
@@ -415,15 +446,18 @@
                     <div class="p-pump"></div>
                     
                     <div class="spray-container">
-                        <!-- Data attributes control vertical offset (ty) -->
-                        <div class="color-drop" style="--ty: -50"></div>
-                        <div class="color-drop" style="--ty: -20"></div>
-                        <div class="color-drop" style="--ty: 30"></div>
-                        <div class="color-drop" style="--ty: 10"></div>
-                        <div class="color-drop" style="--ty: -80"></div>
-                        <div class="color-drop" style="--ty: 60"></div>
-                        <div class="color-drop" style="--ty: -40"></div>
-                        <div class="color-drop" style="--ty: 0"></div>
+                        <!-- Main Water Jet -->
+                        <div class="water-jet"></div>
+                        
+                        <!-- Scattered Drops -->
+                        <div class="color-drop" style="--ty: -60; background: var(--holi-blue); animation-delay: 0s;"></div>
+                        <div class="color-drop" style="--ty: -20; background: var(--holi-pink); animation-delay: 0.1s;"></div>
+                        <div class="color-drop" style="--ty: 40; background: var(--holi-yellow); animation-delay: 0.2s;"></div>
+                        <div class="color-drop" style="--ty: 10; background: white; animation-delay: 0.15s;"></div>
+                        <div class="color-drop" style="--ty: -80; background: var(--holi-green); animation-delay: 0.05s;"></div>
+                        <div class="color-drop" style="--ty: 60; background: var(--holi-orange); animation-delay: 0.25s;"></div>
+                        <div class="color-drop" style="--ty: -40; background: var(--holi-purple); animation-delay: 0.3s;"></div>
+                        <div class="color-drop" style="--ty: 0; background: #00CED1; animation-delay: 0.35s;"></div>
                     </div>
                 </div>
             </div>
@@ -555,7 +589,6 @@
         // --- Animation Loop ---
         function initParticles() {
             particles = [];
-            // Fewer particles on mobile for performance
             const count = window.innerWidth < 768 ? 40 : 80;
             for (let i = 0; i < count; i++) particles.push(new Particle());
         }
@@ -576,7 +609,6 @@
             splashes = splashes.filter(s => !s.isDead());
             splashes.forEach(s => { s.update(); s.draw(); });
 
-            // Maintenance
             const maxParticles = window.innerWidth < 768 ? 100 : 150;
             if (!isGreetingActive && particles.length < maxParticles && Math.random() < 0.3) {
                 particles.push(new Particle());
@@ -662,14 +694,13 @@
             animateName(name);
             celebrationBurst();
 
-            // Continuous fountain
             const celebrationInterval = setInterval(() => {
                 if (!isGreetingActive) { clearInterval(celebrationInterval); return; }
                 const x = Math.random() * window.innerWidth;
                 const p = new Particle(x, window.innerHeight + 50, false);
                 p.speedY = -Math.random() * 3 - 2; p.decay = 0.003;
                 particles.push(p);
-            }, 100); // Slightly reduced rate for mobile
+            }, 100);
         }
 
         function showInput() {
@@ -686,7 +717,7 @@
             if (name) showLoader(name);
             else {
                 nameInput.style.animation = 'none';
-                nameInput.offsetHeight; // Trigger reflow
+                nameInput.offsetHeight;
                 nameInput.style.animation = 'shake 0.5s ease';
                 if (!document.getElementById('shake-style')) {
                     const style = document.createElement('style');
