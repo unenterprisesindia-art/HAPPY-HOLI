@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <title>Happy Holi - Festival of Colors</title>
     <link href="https://cdn.tailwindcss.com" rel="stylesheet">
     <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -32,18 +32,19 @@
             min-height: 100vh;
             overflow-x: hidden;
             transition: background 0.5s ease;
+            -webkit-tap-highlight-color: transparent; /* Remove tap highlight on mobile */
         }
 
-        /* Dark Mode for Loader */
         body.loader-active {
-            background: #050505; /* Deep dark background */
+            background: #050505;
         }
 
         .display-font {
             font-family: 'Pacifico', cursive;
         }
 
-        #particle-canvas {
+        /* Canvas Setup */
+        #particle-canvas, #splash-canvas {
             position: fixed;
             top: 0;
             left: 0;
@@ -52,16 +53,7 @@
             pointer-events: none;
             z-index: 1;
         }
-
-        #splash-canvas {
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            pointer-events: none;
-            z-index: 10;
-        }
+        #splash-canvas { z-index: 10; }
 
         .main-container {
             position: relative;
@@ -71,17 +63,18 @@
             flex-direction: column;
             align-items: center;
             justify-content: center;
-            padding: 2rem;
+            padding: 1rem; /* Reduced padding for mobile */
         }
 
         /* --- Input Section --- */
         .input-section {
             text-align: center;
             animation: fadeInUp 1s ease-out;
+            width: 100%;
         }
 
         .title {
-            font-size: clamp(3rem, 10vw, 6rem);
+            font-size: clamp(2.5rem, 12vw, 6rem); /* Fluid typography */
             background: linear-gradient(45deg, var(--holi-pink), var(--holi-yellow), var(--holi-green), var(--holi-orange), var(--holi-purple), var(--holi-blue));
             background-size: 300% 300%;
             -webkit-background-clip: text;
@@ -93,8 +86,9 @@
 
         .subtitle {
             color: rgba(255, 255, 255, 0.8);
-            font-size: clamp(1rem, 3vw, 1.5rem);
+            font-size: clamp(0.9rem, 3vw, 1.5rem);
             margin-bottom: 2rem;
+            padding: 0 1rem;
         }
 
         .input-wrapper {
@@ -102,11 +96,12 @@
             flex-direction: column;
             gap: 1rem;
             align-items: center;
+            width: 100%;
         }
 
         .name-input {
-            padding: 1rem 2rem;
-            font-size: 1.25rem;
+            padding: 0.8rem 1.5rem;
+            font-size: 1.1rem;
             border: 3px solid transparent;
             border-radius: 50px;
             background: linear-gradient(#1a1a2e, #1a1a2e) padding-box,
@@ -114,22 +109,14 @@
             color: white;
             text-align: center;
             outline: none;
-            width: min(400px, 90vw);
+            width: 100%;
+            max-width: 400px; /* Limit width on desktop */
             transition: transform 0.3s, box-shadow 0.3s;
         }
 
-        .name-input::placeholder {
-            color: rgba(255, 255, 255, 0.5);
-        }
-
-        .name-input:focus {
-            transform: scale(1.02);
-            box-shadow: 0 0 30px rgba(255, 20, 147, 0.4);
-        }
-
         .celebrate-btn {
-            padding: 1rem 3rem;
-            font-size: 1.25rem;
+            padding: 0.8rem 2rem;
+            font-size: 1.1rem;
             font-weight: 600;
             border: none;
             border-radius: 50px;
@@ -139,6 +126,8 @@
             transition: all 0.3s ease;
             position: relative;
             overflow: hidden;
+            width: 90%; /* Wider on mobile */
+            max-width: 300px;
         }
 
         .celebrate-btn::before {
@@ -152,37 +141,27 @@
             transition: left 0.5s;
         }
 
-        .celebrate-btn:hover::before {
-            left: 100%;
-        }
+        .celebrate-btn:hover::before { left: 100%; }
+        .celebrate-btn:hover { transform: translateY(-3px) scale(1.05); box-shadow: 0 10px 40px rgba(255, 20, 147, 0.5); }
 
-        .celebrate-btn:hover {
-            transform: translateY(-3px) scale(1.05);
-            box-shadow: 0 10px 40px rgba(255, 20, 147, 0.5);
-        }
-
-        /* --- Loader Section (Dark & Realistic Pichkari) --- */
+        /* --- Loader Section --- */
         .loader-section {
             display: none;
             position: fixed;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
+            top: 0; left: 0;
+            width: 100%; height: 100%;
             z-index: 20;
             flex-direction: column;
             align-items: center;
             justify-content: center;
             text-align: center;
-            /* Dark ambient background */
             background: radial-gradient(circle at center, #1a1a1a, #000000);
+            padding: 1rem;
         }
 
-        .loader-section.active {
-            display: flex;
-        }
+        .loader-section.active { display: flex; }
 
-        /* 3D Pichkari Construction */
+        /* 3D Pichkari Container */
         .pichkari-scene {
             perspective: 1000px;
             width: 400px;
@@ -190,6 +169,7 @@
             display: flex;
             align-items: center;
             justify-content: center;
+            transform: scale(0.7); /* Scale down by default for better mobile fit */
         }
 
         .pichkari-3d {
@@ -201,156 +181,71 @@
             animation: pumpAction 0.8s infinite ease-in-out;
         }
 
-        /* Main Body - Metallic Cylinder */
+        /* Gun Parts */
         .p-body {
-            position: absolute;
-            top: 30px;
-            left: 0;
-            width: 220px;
-            height: 60px;
+            position: absolute; top: 30px; left: 0; width: 220px; height: 60px;
             background: linear-gradient(to bottom, #e0e0e0 0%, #ffffff 30%, #9e9e9e 70%, #616161 100%);
-            border-radius: 30px;
-            box-shadow: 0 10px 30px rgba(0,0,0,0.8);
-            border: 1px solid #424242;
-            z-index: 1;
+            border-radius: 30px; box-shadow: 0 10px 30px rgba(0,0,0,0.8); border: 1px solid #424242; z-index: 1;
         }
-        /* Decorative Ring on Body */
         .p-body::after {
-            content: '';
-            position: absolute;
-            top: 5px;
-            right: 20px;
-            width: 10px;
-            height: 50px;
-            background: linear-gradient(to right, #757575, #bdbdbd, #757575);
-            border-radius: 5px;
+            content: ''; position: absolute; top: 5px; right: 20px; width: 10px; height: 50px;
+            background: linear-gradient(to right, #757575, #bdbdbd, #757575); border-radius: 5px;
         }
 
-        /* Water Tank - Translucent Plastic */
         .p-tank {
-            position: absolute;
-            top: -30px;
-            left: 30px;
-            width: 100px;
-            height: 70px;
+            position: absolute; top: -30px; left: 30px; width: 100px; height: 70px;
             background: linear-gradient(to bottom, rgba(255, 107, 107, 0.8), rgba(255, 107, 107, 0.4));
-            border-radius: 20px 20px 10px 10px;
-            border: 3px solid rgba(255, 255, 255, 0.3);
-            box-shadow: inset 0 0 20px rgba(255, 255, 255, 0.5), 0 5px 15px rgba(0,0,0,0.5);
-            z-index: 2;
+            border-radius: 20px 20px 10px 10px; border: 3px solid rgba(255, 255, 255, 0.3);
+            box-shadow: inset 0 0 20px rgba(255, 255, 255, 0.5), 0 5px 15px rgba(0,0,0,0.5); z-index: 2;
         }
-        /* Tank Cap */
         .p-tank::before {
-            content: '';
-            position: absolute;
-            top: -10px;
-            left: 50%;
-            transform: translateX(-50%);
-            width: 30px;
-            height: 15px;
-            background: #333;
-            border-radius: 5px 5px 0 0;
+            content: ''; position: absolute; top: -10px; left: 50%; transform: translateX(-50%);
+            width: 30px; height: 15px; background: #333; border-radius: 5px 5px 0 0;
         }
 
-        /* Nozzle - Metallic */
         .p-nozzle {
-            position: absolute;
-            top: 35px;
-            left: 220px;
-            width: 80px;
-            height: 30px;
+            position: absolute; top: 35px; left: 220px; width: 80px; height: 30px;
             background: linear-gradient(to bottom, #a83232, #d63031, #a83232);
-            border-radius: 5px 15px 15px 5px;
-            box-shadow: 0 5px 15px rgba(0,0,0,0.5);
-            z-index: 1;
+            border-radius: 5px 15px 15px 5px; box-shadow: 0 5px 15px rgba(0,0,0,0.5); z-index: 1;
         }
-        /* Nozzle Tip */
         .p-nozzle::after {
-            content: '';
-            position: absolute;
-            right: -10px;
-            top: 5px;
-            width: 15px;
-            height: 20px;
-            background: #333;
-            border-radius: 0 10px 10px 0;
+            content: ''; position: absolute; right: -10px; top: 5px; width: 15px; height: 20px;
+            background: #333; border-radius: 0 10px 10px 0;
         }
 
-        /* Handle - Grip */
         .p-handle {
-            position: absolute;
-            top: 75px;
-            left: 60px;
-            width: 40px;
-            height: 60px;
+            position: absolute; top: 75px; left: 60px; width: 40px; height: 60px;
             background: linear-gradient(to right, #212121, #424242, #212121);
-            border-radius: 0 0 10px 10px;
-            transform: skewX(-10deg);
-            box-shadow: 0 10px 20px rgba(0,0,0,0.6);
-            z-index: 0;
+            border-radius: 0 0 10px 10px; transform: skewX(-10deg);
+            box-shadow: 0 10px 20px rgba(0,0,0,0.6); z-index: 0;
         }
 
-        /* Pumping Mechanism */
         .p-pump {
-            position: absolute;
-            top: 90px;
-            left: 20px;
-            width: 80px;
-            height: 25px;
+            position: absolute; top: 90px; left: 20px; width: 80px; height: 25px;
             background: linear-gradient(to bottom, #4caf50, #2e7d32);
-            border-radius: 10px;
-            box-shadow: 0 5px 0 #1b5e20;
-            z-index: 2;
+            border-radius: 10px; box-shadow: 0 5px 0 #1b5e20; z-index: 2;
             animation: pumpMove 0.8s infinite ease-in-out;
         }
 
-        /* COLOR SPLASH SYSTEM */
+        /* Splash System */
         .spray-container {
-            position: absolute;
-            left: 290px; /* Aligned with nozzle */
-            top: 45px;
-            width: 20px;
-            height: 20px;
-            z-index: 3;
+            position: absolute; left: 290px; top: 45px; width: 20px; height: 20px; z-index: 3;
         }
 
         .color-drop {
-            position: absolute;
-            width: 8px;
-            height: 8px;
-            border-radius: 50%;
-            opacity: 0;
+            position: absolute; width: 8px; height: 8px; border-radius: 50%; opacity: 0;
             animation: splashForward 0.4s infinite linear;
         }
 
-        /* Generating multiple drops with different delays/positions */
-        .color-drop:nth-child(1) { animation-delay: 0s; top: 0; background: var(--holi-pink); }
-        .color-drop:nth-child(2) { animation-delay: 0.05s; top: -5px; background: var(--holi-blue); }
-        .color-drop:nth-child(3) { animation-delay: 0.1s; top: 5px; background: var(--holi-yellow); }
-        .color-drop:nth-child(4) { animation-delay: 0.15s; top: -8px; background: var(--holi-green); }
-        .color-drop:nth-child(5) { animation-delay: 0.2s; top: 8px; background: var(--holi-orange); }
-        .color-drop:nth-child(6) { animation-delay: 0.25s; top: -2px; background: var(--holi-purple); }
-        .color-drop:nth-child(7) { animation-delay: 0.3s; top: 2px; background: var(--holi-red); }
-        .color-drop:nth-child(8) { animation-delay: 0.35s; top: -10px; background: white; }
-
+        /* Default splash distance (Desktop) */
         @keyframes splashForward {
-            0% {
-                transform: translate(0, 0) scale(1);
-                opacity: 1;
-            }
-            100% {
-                transform: translate(300px, calc(var(--ty) * 1px)) scale(0);
-                opacity: 0;
-            }
+            0% { transform: translate(0, 0) scale(1); opacity: 1; }
+            100% { transform: translate(200px, calc(var(--ty) * 1px)) scale(0); opacity: 0; }
         }
 
         .loader-text {
-            margin-top: 60px;
-            font-size: 2rem;
-            font-weight: 800;
-            color: #ffffff; /* White text for dark mode */
-            text-transform: uppercase;
-            letter-spacing: 2px;
+            margin-top: 40px; font-size: 1.5rem; font-weight: 800; color: #ffffff;
+            text-transform: uppercase; letter-spacing: 1px;
             text-shadow: 0 0 10px rgba(255, 20, 147, 0.5);
         }
 
@@ -369,42 +264,33 @@
             display: none;
             text-align: center;
             animation: explodeIn 1s ease-out;
+            padding: 1rem;
+            width: 100%;
         }
-
-        .greeting-section.active {
-            display: block;
-        }
+        .greeting-section.active { display: block; }
 
         .greeting-text {
-            font-size: clamp(2.5rem, 8vw, 5rem);
-            margin-bottom: 1rem;
+            font-size: clamp(2rem, 8vw, 5rem);
+            margin-bottom: 0.5rem;
         }
 
-        .greeting-text .happy {
+        .greeting-text .happy, .greeting-text .holi {
             display: inline-block;
-            background: linear-gradient(45deg, var(--holi-yellow), var(--holi-orange), var(--holi-red));
             background-size: 200% 200%;
             -webkit-background-clip: text;
             -webkit-text-fill-color: transparent;
             background-clip: text;
             animation: gradientShift 2s ease infinite;
         }
-
-        .greeting-text .holi {
-            display: inline-block;
-            background: linear-gradient(45deg, var(--holi-green), var(--holi-blue), var(--holi-purple));
-            background-size: 200% 200%;
-            -webkit-background-clip: text;
-            -webkit-text-fill-color: transparent;
-            background-clip: text;
-            animation: gradientShift 2s ease infinite reverse;
-        }
+        .greeting-text .happy { background-image: linear-gradient(45deg, var(--holi-yellow), var(--holi-orange), var(--holi-red)); }
+        .greeting-text .holi { background-image: linear-gradient(45deg, var(--holi-green), var(--holi-blue), var(--holi-purple)); animation-direction: reverse; }
 
         .person-name {
-            font-size: clamp(3rem, 12vw, 7rem);
-            margin: 1rem 0;
+            font-size: clamp(2.5rem, 10vw, 7rem);
+            margin: 0.5rem 0;
             position: relative;
             display: inline-block;
+            word-break: break-word; /* Handle long names on mobile */
         }
 
         .person-name span {
@@ -415,15 +301,16 @@
 
         .wish-message {
             color: rgba(255, 255, 255, 0.9);
-            font-size: clamp(1rem, 3vw, 1.5rem);
+            font-size: clamp(0.9rem, 3vw, 1.5rem);
             max-width: 600px;
-            margin: 2rem auto;
-            line-height: 1.8;
+            margin: 1rem auto;
+            line-height: 1.6;
+            padding: 0 1rem;
         }
 
         .back-btn {
-            margin-top: 2rem;
-            padding: 0.75rem 2rem;
+            margin-top: 1.5rem;
+            padding: 0.6rem 1.5rem;
             font-size: 1rem;
             border: 2px solid rgba(255, 255, 255, 0.3);
             border-radius: 30px;
@@ -433,55 +320,60 @@
             transition: all 0.3s;
         }
 
-        .back-btn:hover {
-            background: rgba(255, 255, 255, 0.2);
-            border-color: rgba(255, 255, 255, 0.5);
-        }
+        /* --- Utilities --- */
+        @keyframes gradientShift { 0%, 100% { background-position: 0% 50%; } 50% { background-position: 100% 50%; } }
+        @keyframes fadeInUp { from { opacity: 0; transform: translateY(30px); } to { opacity: 1; transform: translateY(0); } }
+        @keyframes explodeIn { 0% { opacity: 0; transform: scale(0.5); } 50% { transform: scale(1.1); } 100% { opacity: 1; transform: scale(1); } }
+        @keyframes letterBounce { 0% { opacity: 0; transform: translateY(-100px) rotate(-10deg); } 60% { transform: translateY(20px) rotate(5deg); } 100% { opacity: 1; transform: translateY(0) rotate(0); } }
+        @keyframes float { 0%, 100% { transform: translateY(0) rotate(0deg); } 50% { transform: translateY(-20px) rotate(10deg); } }
 
-        @keyframes gradientShift {
-            0%, 100% { background-position: 0% 50%; }
-            50% { background-position: 100% 50%; }
-        }
-
-        @keyframes fadeInUp {
-            from { opacity: 0; transform: translateY(30px); }
-            to { opacity: 1; transform: translateY(0); }
-        }
-
-        @keyframes explodeIn {
-            0% { opacity: 0; transform: scale(0.5); }
-            50% { transform: scale(1.1); }
-            100% { opacity: 1; transform: scale(1); }
-        }
-
-        @keyframes letterBounce {
-            0% { opacity: 0; transform: translateY(-100px) rotate(-10deg); }
-            60% { transform: translateY(20px) rotate(5deg); }
-            100% { opacity: 1; transform: translateY(0) rotate(0); }
-        }
-
-        @keyframes float {
-            0%, 100% { transform: translateY(0) rotate(0deg); }
-            50% { transform: translateY(-20px) rotate(10deg); }
-        }
-
-        /* Decorative elements */
         .deco-powder {
-            position: fixed;
-            width: 300px;
-            height: 300px;
-            border-radius: 50%;
-            filter: blur(80px);
-            opacity: 0.3;
-            animation: float 6s ease-in-out infinite;
-            pointer-events: none;
-            z-index: 0;
+            position: fixed; width: 300px; height: 300px; border-radius: 50%;
+            filter: blur(80px); opacity: 0.3; animation: float 6s ease-in-out infinite;
+            pointer-events: none; z-index: 0;
+        }
+        .deco-1 { top: 10%; left: 10%; background: var(--holi-pink); }
+        .deco-2 { top: 60%; right: 10%; background: var(--holi-yellow); }
+        .deco-3 { bottom: 10%; left: 30%; background: var(--holi-green); }
+        .deco-4 { top: 30%; right: 20%; background: var(--holi-blue); }
+
+        /* --- MOBILE RESPONSIVE STYLES --- */
+        @media (max-width: 768px) {
+            .pichkari-scene {
+                /* Scale down significantly on mobile */
+                transform: scale(0.55);
+                margin-top: -20px; /* Adjust vertical alignment */
+            }
+
+            /* Reduce splash distance for mobile screens */
+            @keyframes splashForward {
+                0% { transform: translate(0, 0) scale(1); opacity: 1; }
+                100% { transform: translate(100px, calc(var(--ty) * 0.5px)) scale(0); opacity: 0; }
+            }
+
+            .loader-text {
+                font-size: 1.2rem;
+                margin-top: 20px;
+            }
+
+            .deco-powder {
+                width: 150px; /* Smaller background blurs */
+                height: 150px;
+                filter: blur(60px);
+            }
         }
 
-        .deco-1 { top: 10%; left: 10%; background: var(--holi-pink); animation-delay: 0s; }
-        .deco-2 { top: 60%; right: 10%; background: var(--holi-yellow); animation-delay: 1s; }
-        .deco-3 { bottom: 10%; left: 30%; background: var(--holi-green); animation-delay: 2s; }
-        .deco-4 { top: 30%; right: 20%; background: var(--holi-blue); animation-delay: 3s; }
+        @media (max-width: 480px) {
+            .pichkari-scene {
+                transform: scale(0.45);
+            }
+            .loader-text {
+                font-size: 1rem;
+            }
+            .celebrate-btn {
+                width: 100%;
+            }
+        }
 
         @media (prefers-reduced-motion: reduce) {
             *, *::before, *::after {
@@ -512,19 +404,18 @@
             </div>
         </section>
 
-        <!-- Loader Section (Dark & Realistic) -->
+        <!-- Loader Section -->
         <section class="loader-section" id="loader-section">
             <div class="pichkari-scene">
                 <div class="pichkari-3d">
-                    <!-- Parts -->
                     <div class="p-tank"></div>
                     <div class="p-body"></div>
                     <div class="p-nozzle"></div>
                     <div class="p-handle"></div>
                     <div class="p-pump"></div>
                     
-                    <!-- Splash -->
                     <div class="spray-container">
+                        <!-- Data attributes control vertical offset (ty) -->
                         <div class="color-drop" style="--ty: -50"></div>
                         <div class="color-drop" style="--ty: -20"></div>
                         <div class="color-drop" style="--ty: 30"></div>
@@ -554,14 +445,14 @@
     </div>
 
     <script>
-        // Color palette
+        // --- Configuration ---
         const holiColors = [
             '#FF1493', '#FFD700', '#00FF7F', '#FF6B35', 
             '#9B59B6', '#00CED1', '#FF00FF', '#FF4757', 
             '#7FFF00', '#FF69B4'
         ];
 
-        // Particle System
+        // --- Canvas Setup ---
         const particleCanvas = document.getElementById('particle-canvas');
         const pCtx = particleCanvas.getContext('2d');
         const splashCanvas = document.getElementById('splash-canvas');
@@ -569,8 +460,6 @@
 
         let particles = [];
         let splashes = [];
-        let mouseX = 0;
-        let mouseY = 0;
         let isGreetingActive = false;
 
         function resizeCanvas() {
@@ -579,10 +468,10 @@
             splashCanvas.width = window.innerWidth;
             splashCanvas.height = window.innerHeight;
         }
-
         resizeCanvas();
         window.addEventListener('resize', resizeCanvas);
 
+        // --- Particle Classes ---
         class Particle {
             constructor(x, y, burst = false) {
                 this.x = x !== undefined ? x : Math.random() * particleCanvas.width;
@@ -605,12 +494,7 @@
                 this.speedY += this.gravity;
                 this.rotation += this.rotationSpeed;
                 this.life -= this.decay;
-
-                if (this.life <= 0) {
-                    if (!isGreetingActive) {
-                        this.reset();
-                    }
-                }
+                if (this.life <= 0 && !isGreetingActive) this.reset();
             }
 
             reset() {
@@ -630,18 +514,11 @@
                 const safeSize = Math.max(0.1, this.size);
 
                 if (this.shape === 0) {
-                    pCtx.beginPath();
-                    pCtx.arc(0, 0, safeSize, 0, Math.PI * 2);
-                    pCtx.fill();
+                    pCtx.beginPath(); pCtx.arc(0, 0, safeSize, 0, Math.PI * 2); pCtx.fill();
                 } else if (this.shape === 1) {
                     pCtx.fillRect(-safeSize, -safeSize, safeSize * 2, safeSize * 2);
                 } else {
-                    pCtx.beginPath();
-                    pCtx.moveTo(0, -safeSize);
-                    pCtx.lineTo(safeSize, safeSize);
-                    pCtx.lineTo(-safeSize, safeSize);
-                    pCtx.closePath();
-                    pCtx.fill();
+                    pCtx.beginPath(); pCtx.moveTo(0, -safeSize); pCtx.lineTo(safeSize, safeSize); pCtx.lineTo(-safeSize, safeSize); pCtx.closePath(); pCtx.fill();
                 }
                 pCtx.restore();
             }
@@ -649,19 +526,16 @@
 
         class Splash {
             constructor(x, y) {
-                this.x = x;
-                this.y = y;
+                this.x = x; this.y = y;
                 this.radius = 5;
                 this.maxRadius = 150 + Math.random() * 100;
                 this.color = holiColors[Math.floor(Math.random() * holiColors.length)];
                 this.opacity = 0.6;
             }
-
             update() {
                 this.radius += (this.maxRadius - this.radius) * 0.1;
                 this.opacity *= 0.95;
             }
-
             draw() {
                 if (this.opacity < 0.01) return;
                 const safeRadius = Math.max(0.1, this.radius);
@@ -675,83 +549,68 @@
                 sCtx.fill();
                 sCtx.globalAlpha = 1;
             }
-
-            isDead() {
-                return this.opacity < 0.01;
-            }
+            isDead() { return this.opacity < 0.01; }
         }
 
+        // --- Animation Loop ---
         function initParticles() {
             particles = [];
-            for (let i = 0; i < 100; i++) {
-                particles.push(new Particle());
-            }
+            // Fewer particles on mobile for performance
+            const count = window.innerWidth < 768 ? 40 : 80;
+            for (let i = 0; i < count; i++) particles.push(new Particle());
         }
 
         function createBurst(x, y, count = 50) {
-            for (let i = 0; i < count; i++) {
-                particles.push(new Particle(x, y, true));
-            }
+            for (let i = 0; i < count; i++) particles.push(new Particle(x, y, true));
         }
 
-        function createSplash(x, y) {
-            splashes.push(new Splash(x, y));
-        }
+        function createSplash(x, y) { splashes.push(new Splash(x, y)); }
 
         function animate() {
             pCtx.clearRect(0, 0, particleCanvas.width, particleCanvas.height);
             sCtx.clearRect(0, 0, splashCanvas.width, splashCanvas.height);
 
             particles = particles.filter(p => p.life > 0 || !isGreetingActive);
-            particles.forEach(p => {
-                p.update();
-                p.draw();
-            });
+            particles.forEach(p => { p.update(); p.draw(); });
 
             splashes = splashes.filter(s => !s.isDead());
-            splashes.forEach(s => {
-                s.update();
-                s.draw();
-            });
+            splashes.forEach(s => { s.update(); s.draw(); });
 
-            if (!isGreetingActive && particles.length < 100 && Math.random() < 0.3) {
+            // Maintenance
+            const maxParticles = window.innerWidth < 768 ? 100 : 150;
+            if (!isGreetingActive && particles.length < maxParticles && Math.random() < 0.3) {
                 particles.push(new Particle());
             }
 
             requestAnimationFrame(animate);
         }
 
-        // Mouse events
-        document.addEventListener('mousemove', (e) => {
-            mouseX = e.clientX;
-            mouseY = e.clientY;
-            if (Math.random() < 0.2) {
-                particles.push(new Particle(mouseX, mouseY, false));
-            }
+        // --- Interaction Events ---
+        window.addEventListener('mousemove', (e) => {
+            if (Math.random() < 0.2) particles.push(new Particle(e.clientX, e.clientY, false));
         });
 
-        document.addEventListener('click', (e) => {
+        window.addEventListener('click', (e) => {
             createBurst(e.clientX, e.clientY, 30);
             createSplash(e.clientX, e.clientY);
         });
 
-        // Touch events for mobile
-        document.addEventListener('touchmove', (e) => {
-            const touch = e.touches[0];
-            mouseX = touch.clientX;
-            mouseY = touch.clientY;
-            if (Math.random() < 0.3) {
-                particles.push(new Particle(mouseX, mouseY, false));
+        window.addEventListener('touchmove', (e) => {
+            if (e.touches.length > 0) {
+                const touch = e.touches[0];
+                if (Math.random() < 0.3) particles.push(new Particle(touch.clientX, touch.clientY, false));
             }
-        });
+        }, { passive: true });
 
-        document.addEventListener('touchstart', (e) => {
-            const touch = e.touches[0];
-            createBurst(touch.clientX, touch.clientY, 30);
-            createSplash(touch.clientX, touch.clientY);
-        });
+        window.addEventListener('touchstart', (e) => {
+            if (e.touches.length > 0) {
+                const touch = e.touches[0];
+                createBurst(touch.clientX, touch.clientY, 30);
+                createSplash(touch.clientX, touch.clientY);
+            }
+        }, { passive: true });
 
-        // DOM Elements
+        // --- Logic Handling ---
         const inputSection = document.getElementById('input-section');
         const loaderSection = document.getElementById('loader-section');
         const greetingSection = document.getElementById('greeting-section');
@@ -760,11 +619,9 @@
         const backBtn = document.getElementById('back-btn');
         const personName = document.getElementById('person-name');
 
-        // Animate name letters
         function animateName(name) {
             personName.innerHTML = '';
-            const letters = name.split('');
-            letters.forEach((letter, index) => {
+            name.split('').forEach((letter, index) => {
                 const span = document.createElement('span');
                 span.textContent = letter === ' ' ? '\u00A0' : letter;
                 span.style.animationDelay = `${index * 0.1}s`;
@@ -775,7 +632,6 @@
             });
         }
 
-        // Create celebration burst
         function celebrationBurst() {
             const centerX = window.innerWidth / 2;
             const centerY = window.innerHeight / 2;
@@ -787,56 +643,37 @@
                     createSplash(centerX + offsetX, centerY + offsetY);
                 }, i * 200);
             }
-            for (let i = 0; i < 10; i++) {
-                setTimeout(() => {
-                    const x = Math.random() * window.innerWidth;
-                    const y = Math.random() * window.innerHeight;
-                    createBurst(x, y, 30);
-                }, i * 100);
-            }
         }
 
-        // Show Loader
         function showLoader(name) {
             inputSection.style.display = 'none';
             loaderSection.classList.add('active');
-            document.body.classList.add('loader-active'); // Switch background to dark
-
-            // Simulate loading time (3 seconds)
+            document.body.classList.add('loader-active');
             setTimeout(() => {
                 loaderSection.classList.remove('active');
                 showGreeting(name);
             }, 3000);
         }
 
-        // Show greeting
         function showGreeting(name) {
             isGreetingActive = true;
-            // Keep dark background for greeting
             document.body.style.background = 'linear-gradient(135deg, #1a1a2e 0%, #16213e 50%, #0f0f23 100%)';
-            
             greetingSection.classList.add('active');
             animateName(name);
             celebrationBurst();
 
+            // Continuous fountain
             const celebrationInterval = setInterval(() => {
-                if (!isGreetingActive) {
-                    clearInterval(celebrationInterval);
-                    return;
-                }
+                if (!isGreetingActive) { clearInterval(celebrationInterval); return; }
                 const x = Math.random() * window.innerWidth;
-                const y = window.innerHeight + 50;
-                const p = new Particle(x, y, false);
-                p.speedY = -Math.random() * 3 - 2;
-                p.decay = 0.003;
+                const p = new Particle(x, window.innerHeight + 50, false);
+                p.speedY = -Math.random() * 3 - 2; p.decay = 0.003;
                 particles.push(p);
-            }, 50);
+            }, 100); // Slightly reduced rate for mobile
         }
 
-        // Show input
         function showInput() {
             isGreetingActive = false;
-            loaderSection.classList.remove('active');
             greetingSection.classList.remove('active');
             inputSection.style.display = 'block';
             nameInput.value = '';
@@ -844,55 +681,28 @@
             initParticles();
         }
 
-        // Event listeners
         celebrateBtn.addEventListener('click', () => {
             const name = nameInput.value.trim();
-            if (name) {
-                showLoader(name);
-            } else {
+            if (name) showLoader(name);
+            else {
                 nameInput.style.animation = 'none';
-                nameInput.offsetHeight;
+                nameInput.offsetHeight; // Trigger reflow
                 nameInput.style.animation = 'shake 0.5s ease';
                 if (!document.getElementById('shake-style')) {
                     const style = document.createElement('style');
                     style.id = 'shake-style';
-                    style.textContent = `
-                        @keyframes shake {
-                            0%, 100% { transform: translateX(0); }
-                            20%, 60% { transform: translateX(-10px); }
-                            40%, 80% { transform: translateX(10px); }
-                        }
-                    `;
+                    style.textContent = `@keyframes shake { 0%, 100% { transform: translateX(0); } 20%, 60% { transform: translateX(-10px); } 40%, 80% { transform: translateX(10px); }}`;
                     document.head.appendChild(style);
                 }
             }
         });
 
-        nameInput.addEventListener('keypress', (e) => {
-            if (e.key === 'Enter') {
-                celebrateBtn.click();
-            }
-        });
-
+        nameInput.addEventListener('keypress', (e) => { if (e.key === 'Enter') celebrateBtn.click(); });
         backBtn.addEventListener('click', showInput);
 
         // Initialize
         initParticles();
         animate();
-
-        // Accessibility
-        celebrateBtn.addEventListener('keydown', (e) => {
-            if (e.key === 'Enter' || e.key === ' ') {
-                e.preventDefault();
-                celebrateBtn.click();
-            }
-        });
-        backBtn.addEventListener('keydown', (e) => {
-            if (e.key === 'Enter' || e.key === ' ') {
-                e.preventDefault();
-                backBtn.click();
-            }
-        });
     </script>
 </body>
 </html>
